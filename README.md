@@ -1,2 +1,6 @@
 # msa-edu
-test edit
+## 팀원
+- 김권영
+- 김현식
+- 서재권
+## SpringBoot(Maven)
