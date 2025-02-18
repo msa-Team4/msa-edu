@@ -18,7 +18,7 @@ pipeline {
         stage('Check Java Version') {
             steps {
                 sh 'echo "Using Java from: $JAVA_HOME"'
-                sh 'echo "Using Java from: $PATH"'
+                sh 'ls -al $JAVA_HOME'
                 sh 'java -version'
             }
         }
