@@ -5,6 +5,8 @@ pipeline {
         IMAGE_NAME = "k8s-vga-worker1:5000/demo-app-team4"
         IMAGE_TAG = "latest"
         NAMESPACE = "group1-team4"
+        JAVA_HOME = "/home/eva/user/yoon/edu/jdk-21.0.5"
+        PATH = "${JAVA_HOME}/bin:${PATH}"
     }
     stages {
         stage('Checkout') {
@@ -13,6 +15,13 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/msa-Team4/msa-edu.git'
             }
         }
+        stage('Check Java Version') {
+            steps {
+                sh 'echo "Using Java from: $JAVA_HOME"'
+                sh 'java -version'
+            }
+        }
+
         stage('Build with Gradle') {
             steps {
                 script {
