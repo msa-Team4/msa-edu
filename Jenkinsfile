@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "k8s-vga-worker1:5000/demo-app-team4"
         IMAGE_TAG = "latest"
         NAMESPACE = "group1-team4"
-        JAVA_HOME = "/"
+        JAVA_HOME = "/jdk-21.0.5"
         PATH = "${JAVA_HOME}/bin:${PATH}"
     }
     stages {
