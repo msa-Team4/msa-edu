@@ -19,6 +19,7 @@ pipeline {
             steps {
                 sh 'echo "Using Java from: $JAVA_HOME"'
                 sh 'ls -al $JAVA_HOME'
+                sh 'env'
                 sh 'java -version'
             }
         }
