@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-khs
+  namespace: group1-team4
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot-khs
+  template:
+    metadata:
+      labels:
+        app: springboot-khs
+    spec:
+      containers:
+      - name: springboot-khs
+        image: k8s-vga-worker1:5000/group1-team4-khs
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-khs
+  namespace: group1-team4
+spec:
+  selector:
+    app: springboot-khs
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30600
+  type: NodePort

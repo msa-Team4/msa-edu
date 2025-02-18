@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "demo-app-team4"
         IMAGE_TAG = "latest"
         NAMESPACE = "group1-team4"
-        JAVA_HOME = "/jdk-21.0.5"
+        JAVA_HOME = "/usr/local/java21"
         PATH = "${JAVA_HOME}/bin:${PATH}"
     }
     stages {
@@ -55,7 +55,7 @@ pipeline {
             steps {
                 script {
                     // Kubernetes Deployment and Service 생성 및 적용 (1일차 교육때 사용한 deploy & service 생성 yaml 파일 등록하여 사용)
-                    sh "kubectl apply -f /home/eva/user/group1/team4/demo-app.yaml -n ${NAMESPACE}"
+                    sh "kubectl apply -f ./demo-app.yaml -n ${NAMESPACE}"
                 }
             }
         }
