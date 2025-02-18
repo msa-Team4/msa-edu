@@ -17,11 +17,11 @@ pipeline {
             steps {
                 script {
                     // Gradle 실행권한
-                    sh 'chmod +x ./gradlew'
+                    // sh 'chmod +x ./gradlew'
                     // Gradle 빌드 실행
-                    sh './gradlew clean build'
+                    // sh './gradlew clean build'
                     // Maven 빌드 실행 (위 두줄 주석처리 및 아래 한줄 주석해제)
-                    // sh 'mvn clean package -DskipTests'
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     // Kubernetes Deployment and Service 생성 및 적용 (1일차 교육때 사용한 deploy & service 생성 yaml 파일 등록하여 사용)
-                    sh "kubectl apply -f ./yaml/demo-app.yaml -n ${NAMESPACE}"
+                    sh "kubectl apply -f /home/eva/user/group1/team4/demo-app.yaml -n ${NAMESPACE}"
                 }
             }
         }
