@@ -1,4 +1,8 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.completion.importsOnPaste": "on",
+    "java.imports.maven.enabled": true,
+    "java.imports.autoOrganize": true,
+    "java.completion.importOrder": ["java", "javax", "org", "com"]
 }
