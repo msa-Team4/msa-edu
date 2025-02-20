@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: springboot-team4
+  name: springboot-team4-deployment
   namespace: group1-team4
 spec:
   replicas: 1
@@ -14,7 +14,7 @@ spec:
         app: springboot-team4
     spec:
       containers:
-      - name: springboot-team4
+      - name: springboot-team4-container
         image: k8s-vga-worker1:5000/demo-app-team4
         imagePullPolicy: Always
         ports:
@@ -23,7 +23,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: springboot-team4
+  name: springboot-team4-service
   namespace: group1-team4
 spec:
   selector:
