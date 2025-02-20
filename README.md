@@ -10,3 +10,5 @@
 ## Docker
 - image : k8s-vga-worker1:5000/group1-team4-khs
 
+##Swegger
+- ip:port/swagger-ui/index.html 접속
