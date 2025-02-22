@@ -14,35 +14,51 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/msa-Team4/msa-edu.git'
             }
         }
-        stage('Build & Deploy') {
+
+        stage('Check Java Version') {
             steps {
                 dir('springboot-edu') {
-                    stage('Check Java Version') {
-                        sh 'echo "Using Java from: $JAVA_HOME"'
-                        sh 'java -version'
-                    }
-
-                    stage('Build with Maven') {
-                        sh 'mvn clean package -DskipTests'
-                    }
-
-                    stage('Build Docker Image') {
-                        sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ."
-                    }
-
-                    stage('Push Docker Image') {
-                        sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
-                    }
-
-                    stage('Deploy to Kubernetes') {
-                        sh "kubectl apply -f ./demo-app.yaml -n ${NAMESPACE}"
-                    }
-
-                    stage('Update Deployment Image') {
-                        sh "kubectl set image deployment/springboot-team4-deployment springboot-team4-container=${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} --namespace=${NAMESPACE}"
-                    }
+                    sh 'echo "Using Java from: $JAVA_HOME"'
+                    sh 'java -version'
                 }
+            }
+        }
+
+        stage('Build with Maven') {
+            steps {
+                dir('springboot-edu') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('springboot-edu') {
+                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+            }
+        }
+
+        stage('Deploy and Service to Kubernetes') {
+            steps {
+                dir('springboot-edu') {
+                    sh "kubectl apply -f ./demo-app.yaml -n ${NAMESPACE}"
+                }
+            }
+        }
+
+        stage('Deployment Image to Update') {
+            steps {
+                sh "kubectl set image deployment/springboot-team4-deployment springboot-team4-container=${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} --namespace=${NAMESPACE}"
             }
         }
     }
 }
+
