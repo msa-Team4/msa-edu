@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: team4-cards-deployment
+  namespace: group1-team4
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: team4-cards
+
+  template:
+    metadata:
+      labels:
+        app: team4-cards
+    spec:
+      containers:
+      - name: team4-cards-container
+        image: k8s-vga-worker1:5000/group1-team4-cards
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: team4-cards-service
+  namespace: group1-team4
+spec:
+  selector:
+    app: team4-cards
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000
+      nodePort: 30412
+  type: NodePort
+

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: team4-loans-deployment
+  namespace: group1-team4
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: team4-loans
+
+  template:
+    metadata:
+      labels:
+        app: team4-loans
+    spec:
+      containers:
+      - name: team4-loans-container
+        image: k8s-vga-worker1:5000/group1-team4-loans
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: team4-loans-service
+  namespace: group1-team4
+spec:
+  selector:
+    app: team4-loans
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8090
+      nodePort: 30413
+  type: NodePort
+
+
