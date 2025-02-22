@@ -6,9 +6,9 @@
 *.iml
 
 # 빌드 디렉터리
-/bin/
-/build/
-/target/
+bin/
+build/
+target/
 
 # Gradle 관련
 .gradle/
