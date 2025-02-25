@@ -1,38 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: team4-account-deployment
+  name: team4-gatewayserver-deployment
   namespace: group1-team4
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: team4-account
+      app: team4-gatewayserver
 
   template:
     metadata:
       labels:
-        app: team4-account
+        app: team4-gatewayserver
     spec:
       containers:
-      - name: team4-account-container
-        image: k8s-vga-worker1:5000/group1-team4-accounts
+      - name: team4-gatewayserver-container
+        image: k8s-vga-worker1:5000/group1-team4-gatewayserver
         imagePullPolicy: Always
         ports:
-        - containerPort: 9206
+        - containerPort: 9202
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: team4-account-service
+  name: team4-gatewayserver-service
   namespace: group1-team4
 spec:
   selector:
-    app: team4-account
+    app: team4-gatewayserver
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 9206
-      nodePort: 30411
+      targetPort: 9202
+      nodePort: 30415
   type: NodePort
 
