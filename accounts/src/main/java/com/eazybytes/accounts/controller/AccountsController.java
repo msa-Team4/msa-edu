@@ -1,10 +1,34 @@
 package com.eazybytes.accounts.controller;
 
+import java.net.InetAddress;
+import java.util.concurrent.TimeoutException;
+
+import io.github.resilience4j.retry.annotation.Retry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.eazybytes.accounts.constants.AccountsConstants;
+import com.eazybytes.accounts.dto.AccountsContactInfoDto;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
 import com.eazybytes.accounts.service.IAccountsService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,12 +37,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Eazy Bytes
@@ -30,11 +48,24 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 @RequestMapping(path="/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 public class AccountsController {
 
-    private IAccountsService iAccountsService;
+    private final IAccountsService iAccountsService;
+    private final Logger logger = LoggerFactory.getLogger(AccountsController.class);
+
+    public AccountsController(IAccountsService iAccountsService) {
+        this.iAccountsService = iAccountsService;
+    }
+
+    @Value("${build.version}")
+    private String buildVersion;
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private AccountsContactInfoDto accountsContactInfoDto;
 
     @Operation(
             summary = "Create Account REST API",
@@ -162,5 +193,101 @@ public class AccountsController {
         }
     }
 
+    @Operation(
+            summary = "Get Build information",
+            description = "Get Build information that is deployed into accounts microservice"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+
+    // @Retry(name = "getBuildInfo", fallbackMethod = "getBuildInfoFallback")
+    @GetMapping("/build-info")
+    public ResponseEntity<String> getBuildInfo() throws TimeoutException {
+        logger.debug("Invoked Loans build-info API");
+        return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(buildVersion);
+        // throw new java.util.concurrent.TimeoutException("Intentional TimeoutException to trigger retry and open Circuit Breaker");
+    }
+
+    public ResponseEntity<String> getBuildInfoFallback(Throwable throwable) {
+        logger.debug("getBuildInfoFallback() method Invoked");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("0.9");
+    }
+
+    @Operation(
+            summary = "Get Java version",
+            description = "Get Java versions details that is installed into accounts microservice"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @GetMapping("/java-version")
+    public ResponseEntity<String> getJavaVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("JAVA_HOME"));
+    }
+
+    @Operation(
+            summary = "Get Contact Info",
+            description = "Contact Info details that can be reached out in case of any issues"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(accountsContactInfoDto);
+    }
+
+    @GetMapping("/getHostName")
+    public ResponseEntity<String> getHostName() {
+         String hostName = "";
+        try {
+                hostName = InetAddress.getLocalHost().getHostName();
+        } catch (Exception e) {
+                throw new RuntimeException("Error while fetching hostname");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(hostName);
+    }
 
 }

@@ -21,6 +21,18 @@ pipeline {
                     }
                 }
 
+                stage('EurekaServer Service') {
+                    steps {
+                        build job: 'team4-eurekaserver', wait: true
+                    }
+                }
+
+                stage('GatewayServer Service') {
+                    steps {
+                        build job: 'team4-gatewayserver', wait: true
+                    }
+                }
+
                 stage('Springboot-Edu Service') {
                     steps {
                         build job: 'team4-edu1', wait: true
