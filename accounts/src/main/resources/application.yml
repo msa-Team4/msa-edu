@@ -48,8 +48,6 @@ info:
     name: "accounts"
     description: "Eazy Bank Accounts Application"
     version: "1.0.0"
-  build:
-    version: "1.0.0"
 
 resilience4j.circuitbreaker:
   configs:
