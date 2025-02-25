@@ -49,7 +49,7 @@ pipeline {
         stage('Deploy and Service to Kubernetes') {
             steps {
                 dir('accounts') {
-                    sh "kubectl apply -f ./app-accounts.yaml -n ${NAMESPACE}"
+                    sh "kubectl apply -f ./accounts.yaml -n ${NAMESPACE}"
                 }
             }
         }
