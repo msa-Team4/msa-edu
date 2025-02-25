@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class GatewayserverApplication {
@@ -18,7 +19,7 @@ public class GatewayserverApplication {
 		SpringApplication.run(GatewayserverApplication.class, args);
 	}
 
-    // @Bean
+    @Bean
 	public RouteLocator mgbankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
 		logger.debug("Configuring routes for MGBank");
 		return routeLocatorBuilder.routes()
@@ -26,9 +27,9 @@ public class GatewayserverApplication {
                 .path("/mgbank/accounts/**")
                 .filters( f -> f.rewritePath("/mgbank/accounts/(?<segment>.*)","/${segment}")
                     .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-                    // .circuitBreaker(config -> config.setName("accountsCircuitBreaker")
-                    // .setFallbackUri("forward:/contactSupport")
-                    //)
+                    .circuitBreaker(config -> config.setName("accountsCircuitBreaker")
+                    .setFallbackUri("forward:/contactSupport")
+                    )
                 )
                 .uri("lb://ACCOUNTS"))
             .route(p -> p
