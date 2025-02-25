@@ -4,7 +4,7 @@ metadata:
   name: team4-gatewayserver-deployment
   namespace: group1-team4
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: team4-gatewayserver
