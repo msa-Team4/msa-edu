@@ -27,6 +27,12 @@ pipeline {
                     }
                 }
 
+                stage('ConfigServer Service') {
+                    steps {
+                        build job: 'team4-configserver', wait: true
+                    }
+                }
+
                 stage('GatewayServer Service') {
                     steps {
                         build job: 'team4-gatewayserver', wait: true
