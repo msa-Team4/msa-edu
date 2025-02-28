@@ -12,7 +12,7 @@ pipeline {
 
         stage('Deploy and Service to Kubernetes') {
             steps {
-                dir('accounts') {
+                dir('kafka') {
                     sh "kubectl apply -f ./kafka.yaml -n ${NAMESPACE}"
                 }
             }
