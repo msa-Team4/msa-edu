@@ -1,6 +1,6 @@
 spring:
   rabbitmq:
-    host: rabbitmq.group1-team3
+    host: rabbitmq.group1-team4
     port: 5672
     username: guest
     password: guest
