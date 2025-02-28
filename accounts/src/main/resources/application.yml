@@ -90,3 +90,5 @@ logging:
         accounts: DEBUG
     org.springframework: INFO
 
+build:
+  version: "1.0.0"
