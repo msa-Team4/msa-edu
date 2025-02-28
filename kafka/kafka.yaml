@@ -86,8 +86,9 @@ spec:
         - name: EXTERNAL_IP
           valueFrom:
             fieldRef:
-              fieldPath: status.hostIPapiVersion: v1
+              fieldPath: status.hostIP
 ---
+apiVersion: v1
 kind: Service
 metadata:
   name: zookeeper-service
