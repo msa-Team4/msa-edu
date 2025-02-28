@@ -1,7 +1,13 @@
 spring:
   config:
     import: "optional:configserver:http://team4-configserver-service:80/"
-
+  kafka:
+    bootstrap-servers: kafka-headless:9092
+  rabbitmq:
+    host: rabbitmq.group1-team4
+    port: 5672
+    username: guest
+    password: guest
 
 eureka:
   client:

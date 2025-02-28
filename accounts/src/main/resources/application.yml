@@ -23,6 +23,19 @@ spring:
     openfeign:
       circuitbreaker:
         enabled: true
+    stream:
+      default-binder: rabbit
+  # RabbitMQ Configuration - Local, Prod
+  # Kafka Configuration
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: accounts-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 management:
   endpoints:
@@ -71,6 +84,9 @@ resilience4j.retry:
 
 logging:
   level:
+    root: INFO
     com:
       eazybytes:
         accounts: DEBUG
+    org.springframework: INFO
+
