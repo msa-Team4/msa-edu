@@ -46,14 +46,14 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('configserver') {
-                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:v${VERSION} ."
                 }
             }
         }
-
+       
         stage('Push Docker Image') {
             steps {
-                sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+                sh "docker push ${REGISTRY}/${IMAGE_NAME}:v${VERSION}"
             }
         }
 
