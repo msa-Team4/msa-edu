@@ -32,19 +32,31 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Set Version from POM') {
             steps {
                 dir('cards') {
-                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                    script {
+                        env.VERSION = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
+                        echo "Set version from POM: ${VERSION}"
+                    }
                 }
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Build Docker Image') {
             steps {
-                sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+                dir('cards') {
+                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:v${VERSION} ."
+                }
             }
         }
+       
+        stage('Push Docker Image') {
+            steps {
+                sh "docker push ${REGISTRY}/${IMAGE_NAME}:v${VERSION}"
+            }
+        }
+
 
         stage('Deploy and Service to Kubernetes') {
             steps {
@@ -56,7 +68,7 @@ pipeline {
 
         stage('Deployment Image to Update') {
             steps {
-                sh "kubectl set image deployment/team4-cards-deployment team4-cards-container=${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} --namespace=${NAMESPACE}"
+                sh "kubectl set image deployment/team4-cards-deployment team4-cards-container=${REGISTRY}/${IMAGE_NAME}:v${VERSION} --namespace=${NAMESPACE}"
             }
         }
     }

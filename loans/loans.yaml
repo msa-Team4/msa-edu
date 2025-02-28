@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: team4-loans-container
-        image: k8s-vga-worker1:5000/group1-team4-loans
+        image: k8s-vga-worker1:5000/group1-team4-loans:v0.0.1
         imagePullPolicy: Always
         ports:
         - containerPort: 9208

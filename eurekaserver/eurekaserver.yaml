@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: team4-eurekaserver-container
-        image: k8s-vga-worker1:5000/group1-team4-eurekaserver
+        image: k8s-vga-worker1:5000/group1-team4-eurekaserver:v0.1.1
         imagePullPolicy: Always
         ports:
         - containerPort: 9201

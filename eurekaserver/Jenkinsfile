@@ -32,17 +32,28 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Set Version from POM') {
             steps {
                 dir('eurekaserver') {
-                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                    script {
+                        env.VERSION = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
+                        echo "Set version from POM: ${VERSION}"
+                    }
                 }
             }
         }
 
+        stage('Build Docker Image') {
+            steps {
+                dir('eurekaserver') {
+                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:v${VERSION} ."
+                }
+            }
+        }
+       
         stage('Push Docker Image') {
             steps {
-                sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+                sh "docker push ${REGISTRY}/${IMAGE_NAME}:v${VERSION}"
             }
         }
 
@@ -56,7 +67,7 @@ pipeline {
 
         stage('Deployment Image to Update') {
             steps {
-                sh "kubectl set image deployment/team4-eurekaserver-deployment team4-eurekaserver-container=${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} --namespace=${NAMESPACE}"
+                sh "kubectl set image deployment/team4-eurekaserver-deployment team4-eurekaserver-container=${REGISTRY}/${IMAGE_NAME}:v${VERSION} --namespace=${NAMESPACE}"
             }
         }
     }

@@ -23,6 +23,7 @@ pipeline {
                 }
             }
         }
+        
 
         stage('Build with Maven') {
             steps {
@@ -30,22 +31,33 @@ pipeline {
                     sh 'mvn clean package -DskipTests'
                 }
             }
+        }        
+
+        stage('Set Version from POM') {
+            steps {
+                dir('loans') {
+                    script {
+                        env.VERSION = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
+                        echo "Set version from POM: ${VERSION}"
+                    }
+                }
+            }
         }
 
         stage('Build Docker Image') {
             steps {
                 dir('loans') {
-                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:v${VERSION} ."
                 }
             }
         }
-
-        stage('Push Docker Image') {
+       
+        stage('Push Docker Image') {s
             steps {
-                sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+                sh "docker push ${REGISTRY}/${IMAGE_NAME}:v${VERSION}"
             }
         }
-
+        
         stage('Deploy and Service to Kubernetes') {
             steps {
                 dir('loans') {
@@ -56,7 +68,7 @@ pipeline {
 
         stage('Deployment Image to Update') {
             steps {
-                sh "kubectl set image deployment/team4-loans-deployment team4-loans-container=${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} --namespace=${NAMESPACE}"
+                sh "kubectl set image deployment/team4-loans-deployment team4-loans-container=${REGISTRY}/${IMAGE_NAME}:v${VERSION} --namespace=${NAMESPACE}"
             }
         }
     }

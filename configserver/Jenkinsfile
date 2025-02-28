@@ -67,7 +67,7 @@ pipeline {
 
         stage('Deployment Image to Update') {
             steps {
-                sh "kubectl set image deployment/team4-configserver-deployment team4-configserver-container=${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} --namespace=${NAMESPACE}"
+                sh "kubectl set image deployment/team4-configserver-deployment team4-configserver-container=${REGISTRY}/${IMAGE_NAME}:v${VERSION} --namespace=${NAMESPACE}"
             }
         }
     }
