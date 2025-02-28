@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    environment {
+        NAMESPACE = "group1-team4"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/msa-Team4/msa-edu.git'
+            }
+        }
+
+        stage('Deploy and Service to Kubernetes') {
+            steps {
+                dir('keycloak') {
+                    sh "kubectl apply -f ./postgres-pv.yaml -n ${NAMESPACE}"
+                    sh "kubectl apply -f ./postgres.yaml -n ${NAMESPACE}"
+                    sh "kubectl apply -f ./keycloak.yaml -n ${NAMESPACE}"
+                }
+            }
+        }
+    }
+}
+

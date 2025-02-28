@@ -50,6 +50,12 @@ pipeline {
                         build job: 'team4-rabbitmq', wait: true
                     }
                 }
+
+                stage('Keycloak Service') {
+                    steps {
+                        build job: 'team4-keycloak', wait: true
+                    }
+                }
             }
         }
     }
