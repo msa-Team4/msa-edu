@@ -33,7 +33,7 @@ pipeline {
                     }
                 }
             }
-        }s
+        }
 
         stage('Build with Maven') {
             steps {
