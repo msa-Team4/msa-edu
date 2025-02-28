@@ -1,0 +1,22 @@
+pipeline {
+    agent any
+    environment {
+        NAMESPACE = "group1-team4"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/msa-Team4/msa-edu.git'
+            }
+        }
+
+        stage('Deploy and Service to Kubernetes') {
+            steps {
+                dir('rabbitmq') {
+                    sh "kubectl apply -f ./rabbitmq.yaml -n ${NAMESPACE}"
+                }
+            }
+        }
+    }
+}
+

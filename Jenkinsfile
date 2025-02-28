@@ -44,6 +44,12 @@ pipeline {
                         build job: 'team4-kafka', wait: true
                     }
                 }
+				
+                stage('Rabbitmq Service') {
+                    steps {
+                        build job: 'team4-rabbitmq', wait: true
+                    }
+                }
             }
         }
     }
