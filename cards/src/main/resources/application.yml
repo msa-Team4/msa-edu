@@ -44,3 +44,6 @@ info:
     name: "cards"
     description: "Eazy Bank Cards Application"
     version: "1.0.0"
+
+build:
+  version: "1.0.0"s
