@@ -8,7 +8,6 @@ spec:
   selector:
     matchLabels:
       app: team4-cards
-
   template:
     metadata:
       labels:
@@ -35,4 +34,3 @@ spec:
       targetPort: 9207
       nodePort: 30412
   type: NodePort
-

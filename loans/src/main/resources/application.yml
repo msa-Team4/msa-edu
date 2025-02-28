@@ -46,6 +46,8 @@ info:
 
 logging:
   level:
+    root: INFO
     com:
       eazybytes:
         loans: DEBUG
+    org.springframework: INFO

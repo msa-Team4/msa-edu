@@ -1,4 +1,7 @@
-FROM --platform=linux/amd64 eclipse-temurin:21-jdk
-WORKDIR /app
+# FROM openjdk:21-jdk-slim
+# FROM openjdk:21-jdk-alpine
+
+FROM openjdk:21-jdk-slim
+ARG JAR_FILE=target/*.jar
 COPY target/accounts.jar app.jar
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","/app.jar"]

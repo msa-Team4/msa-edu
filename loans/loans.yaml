@@ -8,7 +8,6 @@ spec:
   selector:
     matchLabels:
       app: team4-loans
-
   template:
     metadata:
       labels:
@@ -35,5 +34,3 @@ spec:
       targetPort: 9208
       nodePort: 30413
   type: NodePort
-
-

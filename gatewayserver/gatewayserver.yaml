@@ -8,7 +8,6 @@ spec:
   selector:
     matchLabels:
       app: team4-gatewayserver
-
   template:
     metadata:
       labels:
@@ -35,4 +34,3 @@ spec:
       targetPort: 9202
       nodePort: 30415
   type: NodePort
-
