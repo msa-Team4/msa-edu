@@ -32,9 +32,9 @@ spec:
     - name: amqp
       port: 5672
       targetPort: 5672
-      nodePort: 30313
+      nodePort: 30491
     - name: management
       port: 15672
       targetPort: 15672
-      nodePort: 30314
+      nodePort: 30492
   type: NodePort
