@@ -4,7 +4,7 @@ metadata:
   name: team4-accounts-deployment
   namespace: group1-team4
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: team4-accounts
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: team4-accounts-container
-        image: k8s-vga-worker1:5000/group1-team4-accounts:v0.1.1
+        image: k8s-vga-worker1:5000/group1-team4-accounts:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 9206
