@@ -4,23 +4,19 @@ pipeline {
         REGISTRY = "k8s-vga-worker1:5000"
         IMAGE_NAME = "group1-team4-configserver"
         IMAGE_TAG = "latest"
+        NAME = "team4-configserver"
         NAMESPACE = "group1-team4"
         JAVA_HOME = "/usr/local/java21"
         PATH = "${JAVA_HOME}/bin:${PATH}"
     }
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'main', description: 'select branch to build')
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/msa-Team4/msa-edu.git'
-            }
-        }
-
-        stage('Check Java Version') {
-            steps {
-                dir('configserver') {
-                    sh 'echo "Using Java from: $JAVA_HOME"'
-                    sh 'java -version'
-                }
+                git branch: "${params.BRANCH}", url: 'https://github.com/msa-Team4/msa-edu.git'                
             }
         }
 
@@ -31,32 +27,21 @@ pipeline {
                 }
             }
         }
-
-        stage('Set Version from POM') {
-            steps {
-                dir('configserver') {
-                    script {
-                        env.VERSION = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
-                        echo "Set version from POM: ${VERSION}"
-                    }
-                }
-            }
-        }
-
+       
         stage('Build Docker Image') {
             steps {
                 dir('configserver') {
-                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:v${VERSION} ."
+                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ."
                 }
             }
         }
-       
+
         stage('Push Docker Image') {
             steps {
-                sh "docker push ${REGISTRY}/${IMAGE_NAME}:v${VERSION}"
+                sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
-
+        
         stage('Deploy and Service to Kubernetes') {
             steps {
                 dir('configserver') {
@@ -67,7 +52,8 @@ pipeline {
 
         stage('Deployment Image to Update') {
             steps {
-                sh "kubectl set image deployment/team4-configserver-deployment team4-configserver-container=${REGISTRY}/${IMAGE_NAME}:v${VERSION} --namespace=${NAMESPACE}"
+                sh "kubectl set image deployment/${NAME}-deployment ${NAME}-container=${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} --namespace=${NAMESPACE}"
+
             }
         }
     }

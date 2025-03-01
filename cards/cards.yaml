@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: team4-cards-container
-        image: k8s-vga-worker1:5000/group1-team4-cards:v0.0.1
+        image: k8s-vga-worker1:5000/group1-team4-cards:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 9207

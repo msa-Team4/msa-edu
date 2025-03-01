@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: team4-gatewayserver-container
-        image: k8s-vga-worker1:5000/group1-team4-gatewayserver:v0.0.1
+        image: k8s-vga-worker1:5000/group1-team4-gatewayserver:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 9202
