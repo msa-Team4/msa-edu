@@ -140,6 +140,13 @@
 					</to>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>com.eazybytes.accounts.AccountsApplication</mainClass>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
