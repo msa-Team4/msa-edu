@@ -1,11 +1,10 @@
 server:
-  port: 9207
-
+  port: 9000
 spring:
-  profiles:
-    active: "prod"
   application:
     name: "cards"
+  profiles:
+    active: "prod"
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -19,18 +18,32 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  config:
+    import: "optional:configserver:http://localhost:8071/"
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
   endpoint:
     shutdown:
       access: unrestricted
+    health:
+      probes:
+        enabled: true
   info:
     env:
       enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 
 eureka:
   instance:
@@ -38,6 +51,8 @@ eureka:
   client:
     fetchRegistry: true
     registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
 
 info:
   app:
@@ -45,5 +60,10 @@ info:
     description: "Eazy Bank Cards Application"
     version: "1.0.0"
 
-build:
-  version: "1.0.0"
+logging:
+  level:
+    com:
+      eazybytes:
+        cards: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

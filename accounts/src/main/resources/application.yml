@@ -1,11 +1,10 @@
 server:
-  port: 9206
-
+  port: 8080
 spring:
-  profiles:
-    active: "prod"
   application:
     name: "accounts"
+  profiles:
+    active: "prod"
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -19,35 +18,36 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  config:
+    import: "optional:configserver:http://localhost:8071/"
   cloud:
     openfeign:
       circuitbreaker:
         enabled: true
-    stream:
-      default-binder: rabbit
-  # RabbitMQ Configuration - Local, Prod
-  # Kafka Configuration
-  kafka:
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      group-id: accounts-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
   endpoint:
     shutdown:
       access: unrestricted
+    health:
+      probes:
+        enabled: true
   info:
     env:
       enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 
 eureka:
   instance:
@@ -55,12 +55,22 @@ eureka:
   client:
     fetchRegistry: true
     registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
 
 info:
   app:
     name: "accounts"
     description: "Eazy Bank Accounts Application"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      eazybytes:
+        accounts: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
 resilience4j.circuitbreaker:
   configs:
@@ -82,13 +92,9 @@ resilience4j.retry:
       retryExceptions:
         - java.util.concurrent.TimeoutException
 
-logging:
-  level:
-    root: INFO
-    com:
-      eazybytes:
-        accounts: DEBUG
-    org.springframework: INFO
-
-build:
-  version: "1.0.0"
+resilience4j.ratelimiter:
+  configs:
+    default:
+      timeoutDuration: 1000
+      limitRefreshPeriod: 5000
+      limitForPeriod: 1

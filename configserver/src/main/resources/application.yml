@@ -1,16 +1,15 @@
-server:
-  port: 9200
-
 spring:
   application:
     name: "configserver"
   profiles:
-    active: git, prod
+    # active: native
+    active: git
   cloud:
     config:
       server:
-        native:
-          search-locations: "classpath:/config"
+        # native:
+          # search-locations: "classpath:/config"
+          # search-locations: "file:///Users//eazybytes//Documents//config"
         git:
           uri: "https://github.com/msa-Team4/msa-edu.git"
           default-label: main
@@ -32,8 +31,16 @@ management:
     health:
       probes:
         enabled: true
-    bus-refresh:
-        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 encrypt:
   key: "45D81EC1EF61DF9AD8D3E5BB397F9"
+
+server:
+  port: 8071
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

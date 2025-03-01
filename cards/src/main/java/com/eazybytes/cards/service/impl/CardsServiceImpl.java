@@ -1,10 +1,5 @@
 package com.eazybytes.cards.service.impl;
 
-import java.util.Optional;
-import java.util.Random;
-
-import org.springframework.stereotype.Service;
-
 import com.eazybytes.cards.constants.CardsConstants;
 import com.eazybytes.cards.dto.CardsDto;
 import com.eazybytes.cards.entity.Cards;
@@ -13,16 +8,17 @@ import com.eazybytes.cards.exception.ResourceNotFoundException;
 import com.eazybytes.cards.mapper.CardsMapper;
 import com.eazybytes.cards.repository.CardsRepository;
 import com.eazybytes.cards.service.ICardsService;
-import com.eazybytes.cards.service.client.LoanFeignClient;
-
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 @AllArgsConstructor
 public class CardsServiceImpl implements ICardsService {
 
     private CardsRepository cardsRepository;
-    private LoanFeignClient loanFeignClient;
 
     /**
      * @param mobileNumber - Mobile Number of the Customer
@@ -92,8 +88,5 @@ public class CardsServiceImpl implements ICardsService {
         return true;
     }
 
-    @Override
-    public String getLoanHostName() {
-        return loanFeignClient.getLoanHostName().getBody();
-    }
+
 }
