@@ -10,7 +10,7 @@ pipeline {
         PATH = "${JAVA_HOME}/bin:${PATH}"
     }
     parameters {
-        string(name: 'BRANCH', defaultValue: 'main', description: 'select branch to build')
+        choice(name: 'BRANCH', choices: ['main', 'section12'], description: 'Select branch')
     }
 
     stages {
@@ -27,40 +27,58 @@ pipeline {
                 }
             }
         }
-       
+
         stage('Build Docker Image') {
             steps {
                 dir('gatewayserver') {
-                    sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                    script {
+                        // 버전 태그 생성 (Git 커밋 해시 or timestamp 사용)
+                        env.VERSION = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                        sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${VERSION} -t ${REGISTRY}/${IMAGE_NAME}:latest ."
+                    }
                 }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh "docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+                script {
+                    sh "docker push ${REGISTRY}/${IMAGE_NAME}:${VERSION}"
+                    sh "docker push ${REGISTRY}/${IMAGE_NAME}:latest"
+
+                    // 오래된 Docker 이미지 자동 정리 (최근 5개만 유지)
+                    sh """
+                    docker images --format '{{.Repository}}:{{.Tag}} {{.CreatedAt}}' | grep '${REGISTRY}/${IMAGE_NAME}' | sort -r | tail -n +6 | awk '{print \$1}' | xargs -r docker rmi
+                    """
+                }
             }
         }
         
-        stage('Deploy and Service to Kubernetes') {
+        stage('Deploy to Kubernetes') {
             steps {
                 dir('gatewayserver') {
+                    // 기존 리소스 삭제 후 재배포 (변경 사항 적용 강제화)
+                    sh "kubectl delete -f ./gatewayserver.yaml -n ${NAMESPACE} --ignore-not-found=true"
                     sh "kubectl apply -f ./gatewayserver.yaml -n ${NAMESPACE}"
                 }
             }
         }
 
-        stage('Deployment Image to Update') {
+        stage('Update Deployment Image') {
             steps {
-                sh "kubectl set image deployment/${NAME}-deployment ${NAME}-container=${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} --namespace=${NAMESPACE}"
+                script {
+                    sh "kubectl set image deployment/${NAME}-deployment ${NAME}-container=${REGISTRY}/${IMAGE_NAME}:${VERSION} --namespace=${NAMESPACE}"
 
+                    // 강제로 Pod 재시작 (캐시 문제 방지)
+                    sh "kubectl rollout restart deployment/${NAME}-deployment -n ${NAMESPACE}"
+                }
             }
         }
     }
+
     post {
         always {
             cleanWs()
         }
     }
 }
-

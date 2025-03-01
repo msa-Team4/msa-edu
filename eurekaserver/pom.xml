@@ -89,6 +89,13 @@
 					</to>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>com.eazybytes.eurekaserver.EurekaserverApplication</mainClass>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
  
