@@ -1,6 +1,6 @@
 spring:
   config:
-    import: "optional:configserver:http://localhost:9200/"
+    import: "optional:configserver:http://localhost:8071/"
   kafka:
     bootstrap-servers: localhost:9092
   rabbitmq:
