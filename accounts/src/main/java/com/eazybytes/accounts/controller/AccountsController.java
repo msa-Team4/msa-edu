@@ -1,8 +1,21 @@
 package com.eazybytes.accounts.controller;
 
-import java.net.InetAddress;
-import java.util.concurrent.TimeoutException;
-
+import com.eazybytes.accounts.constants.AccountsConstants;
+import com.eazybytes.accounts.dto.AccountsContactInfoDto;
+import com.eazybytes.accounts.dto.CustomerDto;
+import com.eazybytes.accounts.dto.ErrorResponseDto;
+import com.eazybytes.accounts.dto.ResponseDto;
+import com.eazybytes.accounts.service.IAccountsService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,30 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.eazybytes.accounts.constants.AccountsConstants;
-import com.eazybytes.accounts.dto.AccountsContactInfoDto;
-import com.eazybytes.accounts.dto.CustomerDto;
-import com.eazybytes.accounts.dto.ErrorResponseDto;
-import com.eazybytes.accounts.dto.ResponseDto;
-import com.eazybytes.accounts.service.IAccountsService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Eazy Bytes
@@ -50,8 +40,9 @@ import jakarta.validation.constraints.Pattern;
 @Validated
 public class AccountsController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AccountsController.class);
+
     private final IAccountsService iAccountsService;
-    private final Logger logger = LoggerFactory.getLogger(AccountsController.class);
 
     public AccountsController(IAccountsService iAccountsService) {
         this.iAccountsService = iAccountsService;
@@ -210,23 +201,14 @@ public class AccountsController {
             )
     }
     )
-
-    // @Retry(name = "getBuildInfo", fallbackMethod = "getBuildInfoFallback")
     @GetMapping("/build-info")
-    public ResponseEntity<String> getBuildInfo() throws TimeoutException {
-        logger.debug("Invoked Loans build-info API");
+    public ResponseEntity<String> getBuildInfo() {
+        logger.debug("getBuildInfo() method Invoked");
         return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(buildVersion);
-        // throw new java.util.concurrent.TimeoutException("Intentional TimeoutException to trigger retry and open Circuit Breaker");
     }
 
-    public ResponseEntity<String> getBuildInfoFallback(Throwable throwable) {
-        logger.debug("getBuildInfoFallback() method Invoked");
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("0.9");
-    }
 
     @Operation(
             summary = "Get Java version",
@@ -253,6 +235,7 @@ public class AccountsController {
                 .body(environment.getProperty("JAVA_HOME"));
     }
 
+
     @Operation(
             summary = "Get Contact Info",
             description = "Contact Info details that can be reached out in case of any issues"
@@ -273,23 +256,10 @@ public class AccountsController {
     )
     @GetMapping("/contact-info")
     public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
-
-        logger.debug(accountsContactInfoDto.toString());
-
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(accountsContactInfoDto);
     }
 
-    @GetMapping("/getHostName")
-    public ResponseEntity<String> getHostName() {
-         String hostName = "";
-        try {
-                hostName = InetAddress.getLocalHost().getHostName();
-        } catch (Exception e) {
-                throw new RuntimeException("Error while fetching hostname");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(hostName);
-    }
 
 }
