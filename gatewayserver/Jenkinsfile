@@ -61,6 +61,7 @@ pipeline {
             steps {
                 dir('gatewayserver') {
                     sh "kubectl apply -f ./gatewayserver.yaml -n ${NAMESPACE}"
+                    sh "kubectl rollout status deployment/gatewayserver -n ${NAMESPACE} --timeout=60s"
                     sh "kubectl rollout restart deployment/gatewayserver -n ${NAMESPACE}"
                 }
             }
