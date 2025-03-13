@@ -22,7 +22,7 @@ spring:
    oauth2:
     resourceserver:
      jwt:
-      jwt-set-uri: "http://192.168.100.221:30490/realms/team4/protocol/openid-connect/certs"
+      jwt-set-uri: "http://192.168.100.221:30490/realms/master/protocol/openid-connect/certs"
 
 management:
   tracing:
