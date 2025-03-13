@@ -20,34 +20,4 @@ public class GatewayserverApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GatewayserverApplication.class, args);
 	}
-
-    @Bean
-	public RouteLocator mgbankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
-		logger.debug("Configuring routes for MGBank");
-		return routeLocatorBuilder.routes()
-            .route(p -> p
-                .path("/mgbank/accounts/**")
-                .filters( f -> f.rewritePath("/mgbank/accounts/(?<segment>.*)","/${segment}")
-                    .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-                    .circuitBreaker(config -> config.setName("accountsCircuitBreaker")
-                    .setFallbackUri("forward:/contactSupport")
-                    )
-                )
-                .uri("lb://ACCOUNTS"))
-            .route(p -> p
-                .path("/mgbank/loans/**")
-                .filters( f -> f.rewritePath("/mgbank/loans/(?<segment>.*)","/${segment}")
-                    .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-						.retry(retryConfig -> retryConfig.setRetries(3)
-                    	.setMethods(HttpMethod.GET)
-                    	.setBackoff(Duration.ofMillis(100),Duration.ofMillis(1000),2,true))
-                )
-                .uri("lb://LOANS"))
-            .route(p -> p
-                .path("/mgbank/cards/**")
-                .filters( f -> f.rewritePath("/mgbank/cards/(?<segment>.*)","/${segment}")
-                    .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-                )
-                .uri("lb://CARDS")).build();
-	}
 }
