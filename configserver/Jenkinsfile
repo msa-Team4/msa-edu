@@ -60,7 +60,8 @@ pipeline {
         stage('Deploy and Service to Kubernetes') {
             steps {
                 dir('configserver') {
-                    sh "kubectl apply -f ./configserver.yaml -n ${NAMESPACE}"
+                    sh "kubectl apply -f ./configserver.yaml -n ${NAMESPACE}"                    
+                    sh "kubectl rollout restart deployment team4-configserver-deployment -n ${NAMESPACE}"
                 }
             }
         }

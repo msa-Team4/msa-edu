@@ -60,7 +60,8 @@ pipeline {
         stage('Deploy and Service to Kubernetes') {
             steps {
                 dir('eurekaserver') {
-                    sh "kubectl apply -f ./eurekaserver.yaml -n ${NAMESPACE}"
+                    sh "kubectl apply -f ./eurekaserver.yaml -n ${NAMESPACE}"                    
+                    sh "kubectl rollout restart deployment team4-eurekaserver-deployment -n ${NAMESPACE}"
                 }
             }
         }

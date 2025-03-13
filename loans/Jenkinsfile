@@ -61,7 +61,8 @@ pipeline {
         stage('Deploy and Service to Kubernetes') {
             steps {
                 dir('loans') {
-                    sh "kubectl apply -f ./loans.yaml -n ${NAMESPACE}"
+                    sh "kubectl apply -f ./loans.yaml -n ${NAMESPACE}"                    
+                    sh "kubectl rollout restart deployment team4-loans-deployment -n ${NAMESPACE}"
                 }
             }
         }

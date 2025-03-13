@@ -57,11 +57,11 @@ pipeline {
             }
         }
 
-
         stage('Deploy and Service to Kubernetes') {
             steps {
                 dir('cards') {
-                    sh "kubectl apply -f ./cards.yaml -n ${NAMESPACE}"
+                    sh "kubectl apply -f ./cards.yaml -n ${NAMESPACE}"                    
+                    sh "kubectl rollout restart deployment team4-cards-deployment -n ${NAMESPACE}"
                 }
             }
         }
