@@ -34,7 +34,16 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
-
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
 encrypt:
   key: "45D81EC1EF61DF9AD8D3E5BB397F9"
 

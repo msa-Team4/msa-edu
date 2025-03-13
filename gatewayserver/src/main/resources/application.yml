@@ -35,6 +35,17 @@ management:
   info:
     env:
       enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
 
 eureka:
   instance:
