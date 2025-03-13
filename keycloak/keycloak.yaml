@@ -16,7 +16,7 @@ spec:
         - name: regcred
       containers:
         - name: keycloak
-          image: quay.io/keycloak/keycloak:26.0.7s
+          image: quay.io/keycloak/keycloak:26.0.7
           args: ["start-dev"]
           env:
             - name: KEYCLOAK_ADMIN
