@@ -57,10 +57,11 @@ pipeline {
             }
         }
 
-
         stage('Deploy and Service to Kubernetes') {
             steps {
                 dir('gatewayserver') {
+                    sh "kubectl delete -f ./gatewayserver.yaml -n ${NAMESPACE} --ignore-not-found=true"
+                    sh "kubectl wait --for=delete -f ./gatewayserver.yaml -n ${NAMESPACE} --timeout=60s || true"
                     sh "kubectl apply -f ./gatewayserver.yaml -n ${NAMESPACE}"
                 }
             }
