@@ -12,8 +12,6 @@ import com.eazybytes.accounts.mapper.CustomerMapper;
 import com.eazybytes.accounts.repository.AccountsRepository;
 import com.eazybytes.accounts.repository.CustomerRepository;
 import com.eazybytes.accounts.service.ICustomersService;
-import com.eazybytes.accounts.service.client.CardsFeignClient;
-import com.eazybytes.accounts.service.client.LoansFeignClient;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,8 +22,7 @@ public class CustomersServiceImpl implements ICustomersService {
 
     private AccountsRepository accountsRepository;
     private CustomerRepository customerRepository;
-    private CardsFeignClient cardsFeignClient;
-    private LoansFeignClient loansFeignClient;
+
 
     /**
      * @param mobileNumber - Input Mobile Number
@@ -43,16 +40,6 @@ public class CustomersServiceImpl implements ICustomersService {
 
         CustomerDetailsDto customerDetailsDto = CustomerMapper.mapToCustomerDetailsDto(customer, new CustomerDetailsDto());
         customerDetailsDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountsDto()));
-
-        ResponseEntity<LoansDto> loansDtoResponseEntity = loansFeignClient.fetchLoanDetails(correlationId, mobileNumber);
-        if(null != loansDtoResponseEntity) {
-            customerDetailsDto.setLoansDto(loansDtoResponseEntity.getBody());
-        }
-
-        ResponseEntity<CardsDto> cardsDtoResponseEntity = cardsFeignClient.fetchCardDetails(correlationId, mobileNumber);
-        if(null != cardsDtoResponseEntity) {
-            customerDetailsDto.setCardsDto(cardsDtoResponseEntity.getBody());
-        }
 
 
         return customerDetailsDto;
