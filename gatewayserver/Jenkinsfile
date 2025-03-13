@@ -61,6 +61,15 @@ pipeline {
             steps {
                 dir('gatewayserver') {
                     sh "kubectl apply -f ./gatewayserver.yaml -n ${NAMESPACE}"
+
+                    sh '''
+                    for i in {1..12}; do
+                        kubectl get deployment gatewayserver -n ${NAMESPACE} && break
+                        echo "Waiting for Deployment to be created..."
+                        sleep 5
+                    done
+                    '''
+
                     sh "kubectl rollout status deployment/gatewayserver -n ${NAMESPACE} --timeout=60s"
                     sh "kubectl rollout restart deployment/gatewayserver -n ${NAMESPACE}"
                 }
