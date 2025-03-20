@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    environment {
+    environments {
         JAVA_HOME = "/usr/local/java21"
         PATH = "${JAVA_HOME}/bin:${env.PATH}"
 
