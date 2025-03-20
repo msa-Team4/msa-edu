@@ -12,7 +12,7 @@ image:
   repository: group1-team4-accounts
 
 service:
-  nodePort: 30316
+  nodePort: 30416
 
 
 eazybankcommon:
