@@ -1,0 +1,16 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+deploymentName: team6-gw-pod-cha
+containerName: gw-contain-cha
+serviceName: team6-gw-cha-sv
+appLabel: gw-lbl-cha
+
+replicaCount: 1
+
+image:
+  repository: group1-team6-cha-gw
+
+
+service:
+  nodePort: 30634

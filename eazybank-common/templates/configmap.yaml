@@ -1,0 +1,12 @@
+{{- define "common.configmap" -}}
+{{- if not (lookup "v1" "ConfigMap" .Release.Namespace .Values.global.configMapName) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.global.configMapName }}
+  annotations:
+    "helm.sh/resource-policy": "keep"
+data:
+  SPRING_PROFILES_ACTIVE: {{ .Values.global.activeProfile }}
+{{- end -}}
+{{- end -}}

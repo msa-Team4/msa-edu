@@ -1,0 +1,16 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+deploymentName: team6-cfg-pod-cha
+containerName: cfg-contain-cha
+serviceName: team6-cfg-cha-sv
+appLabel: cfg-lbl-cha
+
+replicaCount: 1
+
+image:
+  repository: group1-team6-cha-cfg
+
+
+service:
+  nodePort: 30633

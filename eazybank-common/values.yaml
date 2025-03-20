@@ -1,0 +1,10 @@
+service:
+  type: NodePort
+  port: 80
+  targetPort: 9206
+containerPort: 9206
+image:
+  policy: Always
+  tag: latest
+app:
+  message: "Helloworld TEAM4"

@@ -1,0 +1,16 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+deploymentName: team6-eureka-pod-cha
+containerName: eureka-contain-cha
+serviceName: team6-eureka-cha-sv
+appLabel: eureka-lbl-cha
+
+replicaCount: 1
+
+image:
+  repository: group1-team6-eureka-server-cha
+
+
+service:
+  nodePort: 30635

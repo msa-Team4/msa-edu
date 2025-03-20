@@ -1,0 +1,23 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+deploymentName: team4-loans-deployment
+containerName: team4-loans-container
+serviceName: team4-loans-service
+appLabel: team4-loans-app
+
+replicaCount: 1
+
+image:
+  repository: group1-team4-loans
+
+
+service:
+  nodePort: 30318
+
+eazybankcommon:
+  service:
+    targetPort: 9208
+  containerPort: 9208
+  image:
+    tag: v0.0.1

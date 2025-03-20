@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+    environment {
+        JAVA_HOME = "/usr/local/java21"
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+
+        COMMON_HELM_CHART_PATH="eazybank-common"
+        GLOBAL_HELM_CHART_PATH="environments/prod-env"
+        HELM_CHART_PATH="environments/prod-env"
+
+
+        NAMESPACE = 'group1-team4'
+        HELM_RELEASE_NAME="team4-helmchart" //고유 ID (겹치지 않게 생성해야됨)
+        
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                // Git 저장소에서 소스 코드 체크아웃 (branch 지정 : 본인 repository의 branch 이름으로 설정)
+                git branch: 'main', url: 'https://github.com/chayeonhee/team4_helmchart.git'
+            }
+        }
+        
+         stage('Helm Dependency Update , Template') {
+            steps {
+                //Chart.yaml이 있는 디렉토리에서 실행
+                script {
+                    ['accounts','cards','loans'].each { service ->
+                            sh "helm dependency update ./eazybank-services/${service}/helm-chart"
+                            sh "helm dependency build ./eazybank-services/${service}/helm-chart"
+                    }
+                }
+
+                sh "helm dependency update ./${GLOBAL_HELM_CHART_PATH}"
+                sh "helm dependency build ./${GLOBAL_HELM_CHART_PATH}"
+
+
+                // yaml 파일 렌더링
+                sh "helm template ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \
+                  -f ./${GLOBAL_HELM_CHART_PATH}/values.yaml \
+                  -f ./${COMMON_HELM_CHART_PATH}/values.yaml \
+                  --namespace ${NAMESPACE} --debug "
+            }
+        }
+        stage('HELM Deploy') {
+            steps {
+                script {
+                        sh "helm upgrade --install ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \
+                        --namespace ${NAMESPACE} \
+                        -f ./${GLOBAL_HELM_CHART_PATH}/values.yaml \
+                        -f ./${COMMON_HELM_CHART_PATH}/values.yaml \
+                        --set accounts.enabled=true \
+                        --set cards.enabled=false \
+                        --set loans.enabled=false \
+                        --reset-values \
+                        --wait --timeout 10m0s" 
+
+                        sh "kubectl get pods --namespace ${NAMESPACE}"
+                }
+            }
+        }
+
+    }
+}

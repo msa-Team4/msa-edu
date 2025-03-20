@@ -1,0 +1,32 @@
+{{- define "common.deployment" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deploymentName }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.appLabel }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appLabel }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appLabel }}
+    spec:
+      containers:
+      - name: {{ .Values.containerName }}
+        image: "{{ .Values.global.privateReposityroURL }}/{{ .Values.image.repository }}:{{ .Values.eazybankcommon.image.tag }}"
+        imagePullPolicy: {{ .Values.eazybankcommon.image.policy }}        
+        ports:
+        - containerPort: {{ .Values.eazybankcommon.containerPort }}
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.global.configMapName }}
+        env:
+        - name: UI_MESSAGE
+          value: "{{ .Values.eazybankcommon.app.message }}"
+{{- end -}}

@@ -1,0 +1,24 @@
+# env:
+#  - name: JAVA_HOME
+#    value: "/usr/local/java21"
+#  - name: PATH
+#    value: "${JAVA_HOME}/bin:${env.PATH}"
+global:
+  namespace: group1-team4
+  configMapName: team4-configmap
+  activeProfile: prod
+  # eurekaServerURL: "team6-eureka-cha-sv:80"
+  # configServerURL: "team6-cfg-cha-sv:80"
+  # gatewayServerURL: "team6-gw-cha-sv:80"
+  # accountsURL: "team6-account-cha-sv:80"
+  # cardsURL: "team6-card-cha-sv:80"
+  # loansURL: "team6-loan-cha-sv:80"
+  privateReposityroURL: k8s-vga-worker1:5000
+
+
+accounts:
+  enabled: false
+cards:
+  enabled: false
+loans:
+  enabled: false
