@@ -7,12 +7,12 @@ global:
   namespace: group1-team4
   configMapName: team4-configmap
   activeProfile: prod
-  # eurekaServerURL: "team6-eureka-cha-sv:80"
-  # configServerURL: "team6-cfg-cha-sv:80"
-  # gatewayServerURL: "team6-gw-cha-sv:80"
-  # accountsURL: "team6-account-cha-sv:80"
-  # cardsURL: "team6-card-cha-sv:80"
-  # loansURL: "team6-loan-cha-sv:80"
+  # eurekaServerURL: "team4-eureka-sv:80"
+  # configServerURL: "team4-cfg-sv:80"
+  # gatewayServerURL: "team4-gw-sv:80"
+  # accountsURL: "team4-account-sv:80"
+  # cardsURL: "team4-card-sv:80"
+  # loansURL: "team4-loan-sv:80"
   privateReposityroURL: k8s-vga-worker1:5000
 
 

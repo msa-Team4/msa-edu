@@ -1,15 +1,15 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-deploymentName: team6-gw-pod-cha
-containerName: gw-contain-cha
-serviceName: team6-gw-cha-sv
-appLabel: gw-lbl-cha
+deploymentName: team4-gw-pod
+containerName: gw-contain
+serviceName: team4-gw-sv
+appLabel: gw-lbl
 
 replicaCount: 1
 
 image:
-  repository: group1-team6-cha-gw
+  repository: group1-team4-gw
 
 
 service:
