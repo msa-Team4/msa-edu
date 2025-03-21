@@ -22,7 +22,6 @@ pipeline {
         
          stage('Helm Dependency Update , Template') {
             steps {
-                //Chart.yaml이 있는 디렉토리에서 실행
                 script {
                     ['accounts','cards','loans'].each { service ->
                             sh "helm dependency update ./eazybank-services/${service}/helm-chart"
@@ -33,8 +32,6 @@ pipeline {
                 sh "helm dependency update ./${GLOBAL_HELM_CHART_PATH}"
                 sh "helm dependency build ./${GLOBAL_HELM_CHART_PATH}"
 
-
-                // yaml 파일 렌더링
                 sh "helm template ${HELM_RELEASE_NAME} ${HELM_CHART_PATH} \
                   -f ./${GLOBAL_HELM_CHART_PATH}/values.yaml \
                   -f ./${COMMON_HELM_CHART_PATH}/values.yaml \
@@ -49,8 +46,8 @@ pipeline {
                         -f ./${GLOBAL_HELM_CHART_PATH}/values.yaml \
                         -f ./${COMMON_HELM_CHART_PATH}/values.yaml \
                         --set accounts.enabled=true \
-                        --set cards.enabled=false \
-                        --set loans.enabled=false \
+                        --set cards.enabled=true \
+                        --set loans.enabled=true \
                         --reset-values \
                         --wait --timeout 10m0s" 
 
